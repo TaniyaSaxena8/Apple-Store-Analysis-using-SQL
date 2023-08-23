@@ -37,4 +37,71 @@ The goal of this analysis was to deep dive into the vast reservoir of data gener
 3.	size_bytes: Memory size (in Bytes)
 4.	app_desc: Application description
 
+**EXPLORATORY DATA ANALYSIS**
+---
+**1. Number of unique apps**
+```js
+SELECT COUNT(Distinct id) 
+FROM Apple.dbo.AppleStore
+
+SELECT COUNT(Distinct id) 
+FROM Apple.dbo.appleStore_description
+```
+Both the files show 7197 apps.
+
+**2. Check for missing values**
+```js
+SELECT COUNT(*) AS missing_values
+FROM Apple.dbo.AppleStore
+WHERE track_name IS NULL OR user_rating IS NULL OR prime_genre IS NULL OR size_bytes IS NULL OR rating_count_tot IS NULL OR sup_devices_num IS NULL 
+
+SELECT COUNT(*) AS missing_values
+FROM Apple.dbo.appleStore_description
+WHERE app_desc IS NULL
+```
+There are '0' missing values in both the files.
+
+**3. Number of apps per genre**
+```js
+SELECT prime_genre, COUNT(*) AS Num_apps
+FROM Apple.dbo.AppleStore
+GROUP BY prime_genre
+ORDER BY Num_apps
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/9dfd0630-e2eb-4fa2-876a-2dc206fe6399)
+
+**4. Rating overview of apps**
+```js
+SELECT MIN(user_rating) AS Min_rating,
+       MAX(user_rating) AS Max_rating,
+	   AVG(user_rating) AS Avg_rating
+FROM Apple.dbo.AppleStore
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/c56a19be-a9cd-4ac5-8d6e-9da0fde39b15)
+
+**5. Content rating overview**
+```js
+SELECT MIN(cont_rating) AS Min_cont_rating,
+       MAX(cont_rating) AS Max_cont_rating,
+	   AVG(cont_rating) AS Avg_cont_rating
+FROM Apple.dbo.AppleStore
+
+SELECT Distinct cont_rating
+FROM Apple.dbo.AppleStore
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/2d8a5d8b-f5e5-4fec-af97-8194d5fa69eb)
+
+**6. Distinct number of supporting devices**
+```js
+SELECT Distinct sup_devices_num
+FROM Apple.dbo.AppleStore
+ORDER BY sup_devices_num
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/3a8b82a8-d819-4a64-b09b-0fd293ab8761)
+
+**DATA ANALYSIS**
+---
+
+
+
 
