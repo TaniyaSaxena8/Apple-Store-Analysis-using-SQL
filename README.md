@@ -101,6 +101,119 @@ ORDER BY sup_devices_num
 
 **DATA ANALYSIS**
 ---
+**1. Determine the effect of price on user rating**
+```js
+SELECT CASE 
+            WHEN price > 0 THEN 'Paid' 
+	        ELSE 'Free'
+       END AS AppType,
+	   AVG(user_rating) AS Avg_rating
+FROM Apple.dbo.AppleStore
+GROUP BY CASE 
+            WHEN price > 0 THEN 'Paid' 
+	        ELSE 'Free'
+       END
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/6b331420-6d1d-4da2-8808-a2f980b876e7)
+
+**2. Average rating of the app according to number of languages supporting**
+```js
+SELECT CASE
+            WHEN lang_num < 10 THEN '<10 Languages'
+			WHEN lang_num BETWEEN 11 AND 30 THEN '11-30 Languages'
+			ELSE '30 Languages'
+	   END AS language_bucket,
+	   AVG(user_rating) AS Avg_rating
+FROM Apple.dbo.AppleStore
+GROUP BY CASE
+            WHEN lang_num < 10 THEN '<10 Languages'
+			WHEN lang_num BETWEEN 11 AND 30 THEN '11-30 Languages'
+			ELSE '30 Languages'
+	   END
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/bd0c0b2d-ad4d-48ec-8b4b-13b542eab637)
+
+**3. Apps group by genre with high ratings**
+```js
+SELECT prime_genre,AVG(user_rating) AS Avg_rating
+FROM Apple.dbo.AppleStore
+GROUP BY prime_genre
+ORDER BY Avg_rating DESC 
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/cc7ce334-988b-468d-90b2-1b74035d1ec5)
+
+**4. Apps group by genre with low ratings**
+```js
+SELECT prime_genre,AVG(user_rating) AS Avg_rating
+FROM Apple.dbo.AppleStore
+GROUP BY prime_genre
+ORDER BY Avg_rating ASC
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/e876ec18-d675-4011-95eb-dc610cc43d96)
+
+**5. Top rated apps for each genre**
+```js
+SELECT prime_genre, track_name, user_rating
+FROM ( SELECT prime_genre, track_name, user_rating,
+	   RANK() OVER(PARTITION by prime_genre ORDER BY user_rating DESC, rating_count_tot DESC) AS rank
+	   FROM Apple.dbo.AppleStore) AS a
+WHERE a.rank=1
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/9bfd2c37-04da-4869-a7f1-749d51e1d480)
+
+**6. Dtermine the correlation between description length and the user rating**
+```js
+SELECT CASE
+			WHEN LEN(b.app_desc)<500 THEN 'Short'
+			WHEN LEN(b.app_desc) BETWEEN 501 AND 1000 THEN 'Medium'
+			ELSE 'Long'
+	   END AS Description_length,
+	   AVG(user_rating) AS Avg_rating
+FROM Apple.dbo.AppleStore AS a
+JOIN Apple.dbo.appleStore_description AS b
+ON a.id=b.id
+GROUP BY CASE
+			WHEN LEN(b.app_desc)<500 THEN 'Short'
+			WHEN LEN(b.app_desc) BETWEEN 501 AND 1000 THEN 'Medium'
+			ELSE 'Long'
+	   END
+ORDER BY Avg_rating DESC
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/71332eac-bef5-4466-a35b-d943c5499cdb)
+
+**7. Correlation between content rating and user rating**
+```js
+SELECT cont_rating, AVG(user_rating) AS Avg_rating
+FROM Apple.dbo.AppleStore
+GROUP BY cont_rating
+ORDER BY cont_rating
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/38e8a5cb-d9d2-4cc0-91af-3f8576ac06cf)
+
+**8. Average rating of app according to number of supporting devices**
+```js
+SELECT CASE
+			WHEN sup_devices_num < 15 THEN '<15 Supporting devices'
+			WHEN sup_devices_num < 25 THEN '<25 Supporting devices'
+			WHEN sup_devices_num < 35 THEN '<35 Supporting devices'
+			ELSE '35+ Supporting devices'
+			END AS Supporting_dev,
+			AVG(user_rating) AS Avg_rating
+FROM Apple.dbo.AppleStore
+GROUP BY CASE
+			WHEN sup_devices_num < 15 THEN '<15 Supporting devices'
+			WHEN sup_devices_num < 25 THEN '<25 Supporting devices'
+			WHEN sup_devices_num < 35 THEN '<35 Supporting devices'
+			ELSE '35+ Supporting devices'
+			END
+ORDER BY Avg_rating DESC
+```
+![image](https://github.com/TaniyaSaxena8/Apple-Store-Analysis-using-SQL/assets/135128191/4648b999-8117-4fc8-a05c-ee379996d3d2)
+
+
+
+
+
 
 
 
